@@ -1,3 +1,6 @@
+import smtplib
+import os
+from email.message import EmailMessage
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -50,3 +53,20 @@ def main():
     print("Done")
 
 main()
+def send_email():
+    email = os.environ["EMAIL_ADDRESS"]
+    password = os.environ["EMAIL_PASSWORD"]
+
+    msg = EmailMessage()
+    msg["Subject"] = "Daily Internship Update"
+    msg["From"] = email
+    msg["To"] = email
+
+    with open("daily_internships.md", "r", encoding="utf-8") as f:
+        msg.set_content(f.read())
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(email, password)
+        smtp.send_message(msg)
+
+send_email()
